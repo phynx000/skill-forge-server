@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: SkillForge
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/skillforge_db
+    username: postgres
+    password: 1084
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 8080
+
+jwt:
+  secret: L+OrcI8LddNx1t+TbvZo9ttaUiZbdVcWOFJXe5HBrgytYTgW8dQL8/aJXJvHoxiZ45zyNy2w+Iw1ntCXYB+U1A==
+  expiration: 8640000
