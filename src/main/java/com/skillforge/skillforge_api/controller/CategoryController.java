@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/v1")
 public class CategoryController {
 
     CategoryService categoryService;
@@ -22,19 +23,19 @@ public class CategoryController {
     }
 
 
-    @PostMapping("/api/categories")
+    @PostMapping("/categories")
     public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryCreateRequest request) {
         CategoryDTO categoryDTO = categoryService.handleCreateCategory(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryDTO);
     }
 
-    @GetMapping("/api/categories")
+    @GetMapping("/categories")
     public ResponseEntity<List<CategoryDTO>> getCategoryTree() {
         List<CategoryDTO> result = categoryService.handleGetTreeCategy();
         return ResponseEntity.ok(result);
     }
 
-    @DeleteMapping("/api/categories/{id}")
+    @DeleteMapping("/categories/{id}")
     public ResponseEntity<String> deleteCategory(@PathVariable Long id) {
         categoryService.handleDeleteCategory(id);
         return ResponseEntity.status(HttpStatusCode.valueOf(205)).body("Category deleted successfully");

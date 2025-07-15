@@ -1,15 +1,24 @@
 package com.skillforge.skillforge_api.controller;
 
+import com.skillforge.skillforge_api.dto.request.UserCreateRequest;
+import com.skillforge.skillforge_api.dto.request.UserUpdateReq;
+import com.skillforge.skillforge_api.dto.response.ResultPaginationDTO;
+import com.skillforge.skillforge_api.dto.response.UserDTO;
 import com.skillforge.skillforge_api.entity.User;
 import com.skillforge.skillforge_api.service.UserService;
+import com.skillforge.skillforge_api.utils.annotation.ApiMessage;
+import com.turkraft.springfilter.boot.Filter;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-
+import java.util.Optional;
+@RequestMapping("/api/v1")
 @RestController
 public class UserController {
 
@@ -18,13 +27,15 @@ public class UserController {
 
     public UserController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
-
         this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsersFromDatabase();
+    @ApiMessage(value = "fetch all users")
+    public ResponseEntity<ResultPaginationDTO> getAllUsers(
+            @Filter Specification<User> specification,
+            Pageable pageable) {
+        ResultPaginationDTO users = this.userService.getAllUsersFromDatabase(specification,pageable);
         return ResponseEntity.ok().body(users);
     }
 
@@ -35,26 +46,26 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        String hashPassword = this.passwordEncoder.encode(user.getPassword());
-        user.setPassword(hashPassword);
-        User newUser = this.userService.handleCreateUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+    @ApiMessage(value = "create a new user successfully")
+    public ResponseEntity<UserDTO> createUser(@RequestBody UserCreateRequest request) {
+        String hashPassword = this.passwordEncoder.encode(request.getPassword());
+        request.setPassword(hashPassword);
+        UserDTO newUserDTO = this.userService.handleCreateUser(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newUserDTO);
     }
 
 
     @PutMapping("/users")
-    public ResponseEntity<User> updateUser(@RequestBody User user) {
-        User newUser = this.userService.handleUpdateUser(user);
+    @ApiMessage(value = "update user successfully")
+    public ResponseEntity<UserDTO> updateUser(@RequestBody UserUpdateReq request) {
+        UserDTO newUser = this.userService.handleUpdateUser(request);
         return ResponseEntity.status(HttpStatus.OK).body(newUser);
     }
 
     @DeleteMapping("/users/{id}")
+    @ApiMessage(value = "delete user successfully")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         this.userService.handleDeleteUser(id);
-//        if (id > 100) {
-//            throw new RuntimeException("User not found with id: " + id);
-//        }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("User deleted successfully");  
     }
 

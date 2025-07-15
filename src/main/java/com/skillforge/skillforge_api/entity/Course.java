@@ -11,6 +11,7 @@ import java.time.Instant;
 @Entity
 @Getter
 @Setter
+@Table(name = "courses")
 public class Course {
 
     @Id
@@ -24,7 +25,7 @@ public class Course {
     @Column(unique = true, length = 100) // slug should be unique and not null
     private String slug; // unique identifier for the course, often used in URLs
 
-    @Column(columnDefinition = "MEDIUMTEXT") // to allow longer descriptions
+    @Column(columnDefinition = "TEXT")
     private String description;
     private String thumbnailUrl;
 

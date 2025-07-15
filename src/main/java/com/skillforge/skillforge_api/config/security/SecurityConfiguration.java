@@ -4,8 +4,6 @@ package com.skillforge.skillforge_api.config.security;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.util.Base64;
 import com.skillforge.skillforge_api.config.CustomAuthenticationEntryPoint;
-import com.skillforge.skillforge_api.service.UserDetailCustom;
-import com.skillforge.skillforge_api.service.UserService;
 import com.skillforge.skillforge_api.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -16,14 +14,15 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.jwt.*;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+
 
 
 import javax.crypto.SecretKey;
@@ -33,20 +32,15 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration {
 
-    private final UserService userService;
-
 
 
     @Value("${jwt.secret}")
     private String jwtSecretKey;
 
-    @Value("${jwt.expiration}")
-    private Long jwtExpiration;
-
-
-
-    public SecurityConfiguration(UserService userService) {
-        this.userService = userService;
+    // Thêm constructor để khởi tạo chiến lược cho SecurityContextHolder
+    public SecurityConfiguration() {
+        // Đảm bảo context được dọn dẹp đúng cách giữa các request trên cùng một luồng
+        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
     }
 
     private SecretKey getSecretKey() {
@@ -73,15 +67,17 @@ public class SecurityConfiguration {
         };
     }
 
+//    @Bean
+//    public JwtDecoder jwtDecoder() {
+//        // Quay trở lại sử dụng decoder mặc định, nó đã đủ tốt và không bị cache.
+//        return NimbusJwtDecoder.withSecretKey(getSecretKey())
+//                .macAlgorithm(SecurityUtils.JWT_ALGORITHM).build();
+//    }
+
 
     @Bean
     public SecurityUtils securityUtils() {
         return new SecurityUtils(jwtEncoder());
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return new UserDetailCustom(userService);
     }
 
 
@@ -100,7 +96,7 @@ public class SecurityConfiguration {
 //    public JwtAuthenticationConverter jwtAuthenticationConverter() {
 //        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
 //        grantedAuthoritiesConverter.setAuthorityPrefix("");
-//        grantedAuthoritiesConverter.setAuthoritiesClaimName(AUTHORITIES_KEY);
+//        grantedAuthoritiesConverter.setAuthoritiesClaimName("permissions");
 //
 //        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
 //        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
@@ -109,38 +105,13 @@ public class SecurityConfiguration {
 
 
 
-
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http, JwtDecoder jwtDecoder,CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
-//
-//        http.csrf(csrf -> csrf.disable())
-//                .authorizeHttpRequests(
-//                        authz -> authz
-//                                .requestMatchers("/", "/login").permitAll()
-//                                .anyRequest().authenticated()
-//
-//                )
-//                .exceptionHandling(exception ->
-//                        exception
-//                                .authenticationEntryPoint(customAuthenticationEntryPoint) // 401
-//                                .accessDeniedHandler(new BearerTokenAccessDeniedHandler()) // 403
-//                )
-//
-//                .addFilterBefore(new JwtAuthenticationFilter(jwtDecoder, new JwtAuthenticationConverter()),
-//                        UsernamePasswordAuthenticationFilter.class)
-//
-//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-//
-//        return http.build();
-//    }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtDecoder jwtDecoder,CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
 
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(
                         authz -> authz
-                                .requestMatchers("/", "/login").permitAll()
+                                .requestMatchers("/", "/api/v1/auth/login", "/api/v1/users", "/api/v1/auth/logout" , "api/v1/auth/refresh").permitAll()
                                 .anyRequest().authenticated()
                 ) .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults())
                         .authenticationEntryPoint(customAuthenticationEntryPoint))

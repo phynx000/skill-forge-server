@@ -1,11 +1,17 @@
 package com.skillforge.skillforge_api.entity;
 
+import com.skillforge.skillforge_api.utils.constant.GenderEnum;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.lang.Nullable;
 
 import java.time.Instant;
 
 @Entity
 @Table(name = "users")
+@Getter
+@Setter
 public class User {
 
     @Id
@@ -13,6 +19,12 @@ public class User {
     private Long id;
     private String username;
     private String fullName;
+
+    @Column(nullable = true)
+    private int age;
+
+    @Enumerated(EnumType.STRING)
+    private GenderEnum gender;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -23,64 +35,12 @@ public class User {
     private Role role;
     private Instant createdAt;
 
+    @Column(columnDefinition = "TEXT")
+    private String refreshToken;
+
     public User() {
     }
 
 
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
 }

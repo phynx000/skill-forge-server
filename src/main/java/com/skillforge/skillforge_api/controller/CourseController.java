@@ -2,17 +2,20 @@ package com.skillforge.skillforge_api.controller;
 
 import com.skillforge.skillforge_api.dto.request.CourseCreateRequest;
 import com.skillforge.skillforge_api.dto.response.CourseDTO;
+import com.skillforge.skillforge_api.dto.response.ResultPaginationDTO;
 import com.skillforge.skillforge_api.service.CourseService;
+import com.skillforge.skillforge_api.utils.annotation.ApiMessage;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
+@RequestMapping ("/api/v1")
 public class CourseController {
 
     private final CourseService courseService;
@@ -21,14 +24,22 @@ public class CourseController {
         this.courseService = courseService;
     }
 
-    @GetMapping("/api/courses")
-    public ResponseEntity<List<CourseDTO>> getAllCourses() {
-        List<CourseDTO> coursesDto = courseService.handleGetAllCourses();
-        return ResponseEntity.ok(coursesDto);
+    @GetMapping("/courses")
+    @ApiMessage(value = "Fetch all courses with pagination")
+    public ResponseEntity<ResultPaginationDTO> getAllCourses(
+            @RequestParam("current")Optional<String> currentOptional,
+            @RequestParam("pageSize")Optional<String> pageSizeOptional) {
+        String sCurrent = currentOptional.isPresent() ? currentOptional.get() : "";
+        String sPageSize = pageSizeOptional.isPresent() ? pageSizeOptional.get() : "";
+        int current = Integer.parseInt(sCurrent);
+        int pageSize = Integer.parseInt(sPageSize);
+        Pageable pageable = PageRequest.of(current - 1, pageSize);
+        ResultPaginationDTO coursesDto = this.courseService.handleGetAllCourses(pageable);
+        return ResponseEntity.ok().body(coursesDto);
 
     }
 
-    @PostMapping("/api/courses")
+    @PostMapping("/courses")
     public ResponseEntity<CourseDTO> createCourse(@Valid @RequestBody CourseCreateRequest request) {
         CourseDTO courseDTO = courseService.handleCreateCourse(request);
         return ResponseEntity.status(201).body(courseDTO);
