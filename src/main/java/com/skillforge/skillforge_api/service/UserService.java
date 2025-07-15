@@ -1,13 +1,26 @@
 package com.skillforge.skillforge_api.service;
 
+import com.skillforge.skillforge_api.dto.mapper.CourseMapper;
+import com.skillforge.skillforge_api.dto.mapper.UserMapper;
+import com.skillforge.skillforge_api.dto.request.UserCreateRequest;
+import com.skillforge.skillforge_api.dto.request.UserUpdateReq;
+import com.skillforge.skillforge_api.dto.response.Meta;
+import com.skillforge.skillforge_api.dto.response.ResultPaginationDTO;
+import com.skillforge.skillforge_api.dto.response.UserDTO;
 import com.skillforge.skillforge_api.entity.User;
 import com.skillforge.skillforge_api.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,16 +30,28 @@ import java.util.Optional;
 public class UserService {
 
     UserRepository userRepository;
+    UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
 
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public List<User> getAllUsersFromDatabase() {
-        List<User> users = userRepository.findAll();
-        return users;
+    public ResultPaginationDTO getAllUsersFromDatabase(Specification<User> spec, Pageable pageable) {
+        Page<User> usersPage = userRepository.findAll(spec,pageable);
+        ResultPaginationDTO result = new ResultPaginationDTO();
+        Meta meta = new Meta();
+        meta.setPage(pageable.getPageNumber()+ 1); // Spring Data JPA uses 0-based index
+        meta.setPageSize(pageable.getPageSize());
+        meta.setPages(usersPage.getTotalPages());
+        meta.setTotalItems(usersPage.getTotalElements());
+        result.setMeta(meta);
+        result.setResults(usersPage.getContent());
+        return result;
     }
 
     public User fetchUserById(Long id) {
@@ -38,38 +63,29 @@ public class UserService {
         return null;
     }
 
-    public User handleCreateUser(User user) {
-        user.setCreatedAt(java.time.Instant.now());
-        return userRepository.save(user);
+    @Transactional
+    public UserDTO handleCreateUser(UserCreateRequest request) {
+        User user = userMapper.toEntity(request);
+        // Mã hóa mật khẩu trước khi lưu
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        String hashed = user.getPassword();
+
+        User savedUser = userRepository.save(user);
+        return userMapper.toDto(savedUser);
     }
 
 
     @Transactional
-    public User handleUpdateUser(User reqUser) {
-        // 1. Lấy user hiện tại từ DB
-        User currentUser = fetchUserById(reqUser.getId());
+    public UserDTO handleUpdateUser(UserUpdateReq request) {
+        User currentUser = fetchUserById(request.getId());
         if (currentUser == null) {
-            throw new EntityNotFoundException("User not found with id: " + reqUser.getId());
+            throw new EntityNotFoundException("User not found with id: " + request.getId());
         }
+        currentUser = userMapper.updateEntity(currentUser, request);
+        userRepository.save(currentUser);
+        UserDTO userDTO = userMapper.toDto(currentUser);
 
-        // 2. Kiểm tra nếu email bị trùng với user khác
-        boolean emailTaken = userRepository.existsByEmailAndIdNot(reqUser.getEmail(), reqUser.getId());
-        if (emailTaken) {
-            throw new IllegalArgumentException("Email đã được sử dụng bởi người dùng khác");
-        }
-
-        // 3. Cập nhật thông tin
-        currentUser.setFullName(reqUser.getFullName());
-        currentUser.setEmail(reqUser.getEmail());
-        currentUser.setUsername(reqUser.getUsername());
-        currentUser.setPassword(reqUser.getPassword());
-        currentUser.setRole(reqUser.getRole());
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("🧪 Auth: " + auth);
-
-        // 4. Lưu lại
-        return userRepository.save(currentUser);
+        return userDTO;
     }
 
 
@@ -81,10 +97,18 @@ public class UserService {
     }
 
     public User handeFindByEmail(String email) {
-        return userRepository.findByEmail(email);
+        return userRepository.findByEmail(email).orElseThrow( () -> new EntityNotFoundException("User not found with email: " + email));
 
     }
 
+    public void updateUserToken(String token, String email) {
+        User currentUser = this.handeFindByEmail(email);
+        if (currentUser == null) {
+            throw new EntityNotFoundException("User not found with email: " + email);
+        }
+        currentUser.setRefreshToken(token);
+        this.userRepository.save(currentUser);
+    }
 
     /**
      * cần cải tiến lại hàm này
@@ -92,15 +116,31 @@ public class UserService {
      *  Nên kiểm tra kết quả userRepository.findByEmail(...) có null không
       * @return
      */
-        public User getCurrentUser() {
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        com.skillforge.skillforge_api.entity.User user = new com.skillforge.skillforge_api.entity.User();
-        if (securityContext != null && securityContext.getAuthentication() != null) {
-            Object principal = securityContext.getAuthentication().getPrincipal();
-                user = userRepository.findByEmail(principal.toString());
-                return user;
-
+    public User getCurrentUser() {
+        SecurityContext context = SecurityContextHolder.getContext();
+        if (context == null || context.getAuthentication() == null || !context.getAuthentication().isAuthenticated()) {
+            throw new UsernameNotFoundException("No authenticated user found");
         }
-        throw new UsernameNotFoundException("No authenticated user found");
+
+        Object principal = context.getAuthentication().getPrincipal();
+
+        String email = null;
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername(); // hoặc getEmail() nếu bạn custom UserDetails
+        } else if (principal instanceof Jwt) {
+            email = ((Jwt) principal).getClaimAsString("sub"); // nếu dùng JWT chứa email
+        } else if (principal instanceof String && !"anonymousUser".equals(principal)) {
+            email = principal.toString(); // fallback
+        }
+
+        if (email != null) {
+            User user = this.handeFindByEmail(email);
+            if (user != null) {
+                return user;
+            }
+        }
+
+        throw new UsernameNotFoundException("Cannot find current user from principal");
     }
+
 }

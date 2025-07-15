@@ -3,9 +3,13 @@ package com.skillforge.skillforge_api.service;
 import com.skillforge.skillforge_api.dto.mapper.CourseMapper;
 import com.skillforge.skillforge_api.dto.request.CourseCreateRequest;
 import com.skillforge.skillforge_api.dto.response.CourseDTO;
+import com.skillforge.skillforge_api.dto.response.Meta;
+import com.skillforge.skillforge_api.dto.response.ResultPaginationDTO;
 import com.skillforge.skillforge_api.entity.Course;
 import com.skillforge.skillforge_api.repository.CourseRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,11 +30,19 @@ public class CourseService {
         this.userService = userService;
     }
 
-    public List<CourseDTO> handleGetAllCourses() {
-        List<Course> courses = courseRepository.findAll();
-        return courses.stream()
+    public ResultPaginationDTO handleGetAllCourses(Pageable pageable) {
+        Page<Course> courses = courseRepository.findAll(pageable);
+        ResultPaginationDTO result = new ResultPaginationDTO();
+        Meta meta = new Meta();
+        meta.setPage(pageable.getPageNumber()+ 1); // Convert to 1-based index for the response
+        meta.setPageSize(pageable.getPageSize());
+        meta.setPages(courses.getTotalPages());
+        meta.setTotalItems(courses.getTotalElements());
+        result.setMeta(meta);
+        result.setResults(courses.getContent().stream()
                 .map(courseMapper::toDto)
-                .toList();
+                .toList());
+        return result;
 
     }
 
@@ -61,7 +73,6 @@ public class CourseService {
         Course updatedCourse = courseRepository.save(existingCourse);
         return courseMapper.toDto(updatedCourse);
     }
-
 
 
 

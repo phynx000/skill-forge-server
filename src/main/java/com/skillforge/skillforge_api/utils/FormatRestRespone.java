@@ -2,6 +2,7 @@ package com.skillforge.skillforge_api.utils;
 
 
 import com.skillforge.skillforge_api.entity.RestResponse;
+import com.skillforge.skillforge_api.utils.annotation.ApiMessage;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -41,7 +42,8 @@ public class FormatRestRespone implements ResponseBodyAdvice<Object> {
             restResponse.setMessage(body);
         } else {
             restResponse.setData(body);
-            restResponse.setMessage("Call api Success");
+            ApiMessage apiMessage = returnType.getMethodAnnotation(ApiMessage.class);
+            restResponse.setMessage(apiMessage != null ? apiMessage.value() : "Call api Success");
         }
 
         return restResponse;

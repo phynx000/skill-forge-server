@@ -1,6 +1,8 @@
 package com.skillforge.skillforge_api.utils;
 
 
+import com.nimbusds.jose.util.Base64;
+import com.skillforge.skillforge_api.dto.response.ResponseLoginDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -10,8 +12,11 @@ import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.core.GrantedAuthority;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,8 +26,11 @@ public class SecurityUtils {
     @Value("${jwt.secret}")
     private String jwtSecretKey;
 
-    @Value("${jwt.expiration}")
+    @Value("${jwt.access-token-validity-in-seconds}")
     private Long jwtExpiration;
+
+    @Value("${jwt.refresh-token-validity-in-seconds}")
+    private String jwtRefreshExpiration;
 
     public static final MacAlgorithm JWT_ALGORITHM = MacAlgorithm.HS512;
 
@@ -32,8 +40,25 @@ public class SecurityUtils {
         this.jwtEncoder = jwtEncoder;
     }
 
+    private SecretKey getSecretKey() {
+        byte[] keyBytes = Base64.from(jwtSecretKey).decode();
+        return new SecretKeySpec(keyBytes, 0, keyBytes.length, SecurityUtils.JWT_ALGORITHM.getName());
+    }
 
-    public String createToken(Authentication authentication) {
+    public Jwt checkValidRefreshToken(String refreshToken) {
+        NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(
+                getSecretKey()).macAlgorithm(SecurityUtils.JWT_ALGORITHM).build();
+
+            try {
+             return  jwtDecoder.decode(refreshToken);
+            } catch (Exception e) {
+                System.out.println(">>> JWT error: " + e.getMessage());
+                throw e;
+        }
+    }
+
+
+    public String createAccessToken(Authentication authentication, ResponseLoginDTO.UserLogin userLogin) {
 
         Instant now = Instant.now();
         Instant validity = now.plus(this.jwtExpiration, ChronoUnit.SECONDS);
@@ -42,12 +67,36 @@ public class SecurityUtils {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
+        List<String> listAuthorities = new ArrayList<String>();
+
+        listAuthorities.add("ROLE_USER_CREATE");
+        listAuthorities.add("ROLE_USER_UPDATE");
+
         // @formatter:off
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuedAt(now)
                 .expiresAt(validity)
                 .subject(authentication.getName())
-                .claim("roles", authentication)
+                .claim("user", userLogin)
+                .claim("permissions", listAuthorities)
+                .build();
+
+        JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
+        return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
+    }
+
+    public String createRefreshToken(String email, ResponseLoginDTO dto) {
+
+        Instant now = Instant.now();
+        Instant validity = now.plus(this.jwtExpiration, ChronoUnit.SECONDS);
+
+
+        // @formatter:off
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                .issuedAt(now)
+                .expiresAt(validity)
+                .subject(email)
+                .claim("user", dto.getUser())
                 .build();
 
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
@@ -60,6 +109,7 @@ public class SecurityUtils {
      * @return the login of the current user.
      */
     public static Optional<String> getCurrentUserLogin() {
+//        SecurityContextHolder.clearContext();
         SecurityContext securityContext = SecurityContextHolder.getContext();
         return Optional.ofNullable(extractPrincipal(securityContext.getAuthentication()));
     }

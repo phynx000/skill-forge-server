@@ -1,6 +1,10 @@
 spring:
   application:
     name: SkillForge
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true # Use one-indexed parameters for pagination
 
   datasource:
     url: jdbc:postgresql://localhost:5432/skillforge_db
@@ -20,4 +24,5 @@ server:
 
 jwt:
   secret: L+OrcI8LddNx1t+TbvZo9ttaUiZbdVcWOFJXe5HBrgytYTgW8dQL8/aJXJvHoxiZ45zyNy2w+Iw1ntCXYB+U1A==
-  expiration: 8640000
+  access-token-validity-in-seconds: 8640000 # 100 days
+  refresh-token-validity-in-seconds: 864000000 # 1000 days

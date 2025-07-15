@@ -1,13 +1,27 @@
 package com.skillforge.skillforge_api.dto.response;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class ResponseLoginDTO {
-    private String accessToken;
+    private String access_token;
+    private UserLogin user;
 
-    public String getAccessToken() {
-        return accessToken;
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    public static class UserLogin {
+        private Long id;
+        private String username;
+        private String fullName;
+        private String email;
+
+        public UserLogin() {
+
+        }
     }
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
 }
