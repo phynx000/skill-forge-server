@@ -110,6 +110,11 @@ public class UserService {
         this.userRepository.save(currentUser);
     }
 
+
+    public User findUserByTRefreshTokenAndEmail(String refreshToken, String email) {
+        return userRepository.findByRefreshTokenAndEmail(refreshToken, email);
+    }
+
     /**
      * cần cải tiến lại hàm này
      *  principal.toString() chưa chắc là email, nếu principal là UserDetails hoặc Jwt.

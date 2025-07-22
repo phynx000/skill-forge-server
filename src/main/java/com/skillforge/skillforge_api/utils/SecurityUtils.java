@@ -58,25 +58,26 @@ public class SecurityUtils {
     }
 
 
-    public String createAccessToken(Authentication authentication, ResponseLoginDTO.UserLogin userLogin) {
+    public String createAccessToken(String email, ResponseLoginDTO.UserLogin userLogin) {
 
         Instant now = Instant.now();
         Instant validity = now.plus(this.jwtExpiration, ChronoUnit.SECONDS);
 
-        List<String> roles = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+//        List<String> roles = authentication.getAuthorities().stream()
+//                .map(GrantedAuthority::getAuthority)
+//                .collect(Collectors.toList());
 
         List<String> listAuthorities = new ArrayList<String>();
 
         listAuthorities.add("ROLE_USER_CREATE");
         listAuthorities.add("ROLE_USER_UPDATE");
 
+
         // @formatter:off
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuedAt(now)
                 .expiresAt(validity)
-                .subject(authentication.getName())
+                .subject(email)
                 .claim("user", userLogin)
                 .claim("permissions", listAuthorities)
                 .build();
