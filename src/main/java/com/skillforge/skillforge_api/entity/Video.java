@@ -33,7 +33,7 @@ public class Video {
 
 //    @OneToOne
 //    @JoinColumn(name = "lession_id", nullable = false)
-//    private Lession lession;
+//    private Lesson lession;
 //
 //    @ManyToOne
 //    @JoinColumn(name = "course_id", nullable = false)

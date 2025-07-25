@@ -9,18 +9,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class VideoMapper {
 
-    public Video toVideoEntity(CreateVideoRequest request) {
-        Video video = new Video();
-        video.setTitle(request.getTitle());
-        video.setVideoLibraryId(request.getVideoLibraryId());
-        video.setPlayURL(request.getVideoPlaylistUrl());
-        video.setGuid(request.getGuid());
-        video.setThumbnailUrl(request.getThumbnailUrl());
-        video.setLength(request.getLength());
-        video.setPublic(request.isPublic());
-        video.setStatus(request.getStatus());
-        return video;
-    }
+//    public Video toVideoEntity(CreateVideoRequest request) {
+//        Video video = new Video();
+//        video.setTitle(request.getTitle());
+//        video.setVideoLibraryId(request.getVideoLibraryId());
+//        video.setPlayURL(request.getVideoPlaylistUrl());
+//        video.setGuid(request.getGuid());
+//        video.setThumbnailUrl(request.getThumbnailUrl());
+//        video.setLength(request.getLength());
+//        video.setPublic(request.isPublic());
+//        video.setStatus(request.getStatus());
+//        return video;
+//    }
 
     public Video resToEntity(BunnyStreamVideoResponse response) {
         Video video = new Video();

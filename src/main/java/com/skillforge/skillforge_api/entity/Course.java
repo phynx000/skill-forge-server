@@ -22,7 +22,7 @@ public class Course {
     @Column(nullable = false) // title should not be null
     private double price;
 
-    @Column(unique = true, length = 100) // slug should be unique and not null
+    @Column(unique = false, length = 100) // slug should be unique and not null
     private String slug; // unique identifier for the course, often used in URLs
 
     @Column(columnDefinition = "TEXT")
@@ -43,6 +43,14 @@ public class Course {
     private Instant updatedAt;
     private String createdBy;
 
+    public Course(Long courseId) {
+        this.id = courseId;
+    }
+
+    public Course() {
+
+    }
+
 
     public String generateSlug() {
         // Simple slug generation logic, can be improved
@@ -54,6 +62,9 @@ public class Course {
         this.createdBy = SecurityUtils.getCurrentUserLogin().isPresent() == true ? SecurityUtils.getCurrentUserLogin().get() : "";
         this.createdAt = Instant.now();
         this.slug = generateSlug();
+        if (this.title != null) {
+            this.slug = generateSlug();
+        }
     }
 
 }
