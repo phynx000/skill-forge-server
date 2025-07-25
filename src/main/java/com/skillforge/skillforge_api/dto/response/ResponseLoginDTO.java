@@ -1,13 +1,16 @@
 package com.skillforge.skillforge_api.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class ResponseLoginDTO {
-    private String access_token;
+    @JsonProperty("access_token")
+    private String accessToken;
     private UserLogin user;
 
     @Getter
@@ -22,6 +25,14 @@ public class ResponseLoginDTO {
         public UserLogin() {
 
         }
+
+    }
+    @Setter
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserGetAccount {
+        private UserLogin user;
     }
 
 }

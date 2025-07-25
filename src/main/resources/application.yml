@@ -6,6 +6,11 @@ spring:
       pageable:
         one-indexed-parameters: true # Use one-indexed parameters for pagination
 
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
+
   datasource:
     url: jdbc:postgresql://localhost:5432/skillforge_db
     username: postgres
@@ -19,10 +24,21 @@ spring:
       hibernate:
         format_sql: true
 
+
+
 server:
   port: 8080
 
 jwt:
-  secret: L+OrcI8LddNx1t+TbvZo9ttaUiZbdVcWOFJXe5HBrgytYTgW8dQL8/aJXJvHoxiZ45zyNy2w+Iw1ntCXYB+U1A==
+  secret: ${SECRET_KEY:defaultSecretKey}
   access-token-validity-in-seconds: 8640000 # 100 days
   refresh-token-validity-in-seconds: 864000000 # 1000 days
+
+bunny:
+  stream:
+    access-key: ${BUNNY_API_KEY:defaultBunnyApiKey}
+    library-id: 469408
+    base-url: "https://video.bunnycdn.com"
+    bunny-cdn-key: ${BUNNY_CDN_KEY:defaultBunnyCdnKey}
+
+

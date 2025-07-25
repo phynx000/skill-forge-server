@@ -5,6 +5,7 @@ import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.util.Base64;
 import com.skillforge.skillforge_api.config.CustomAuthenticationEntryPoint;
 import com.skillforge.skillforge_api.utils.SecurityUtils;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,6 +37,18 @@ public class SecurityConfiguration {
 
     @Value("${jwt.secret}")
     private String jwtSecretKey;
+
+    @Value("${bunny.api-key}")
+    private String bunnyApiKey;
+
+//    @PostConstruct
+//    public void init() {
+//        // Kiểm tra xem các giá trị đã được inject đúng chưa
+//        System.out.println(">>> JWT Secret Key: " + jwtSecretKey);
+//        System.out.println(">>> Bunny API Key: " + bunnyApiKey);
+//    }
+
+
 
     // Thêm constructor để khởi tạo chiến lược cho SecurityContextHolder
     public SecurityConfiguration() {

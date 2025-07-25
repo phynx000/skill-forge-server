@@ -38,7 +38,7 @@ public class Course {
     private User instructor;
     private boolean isPublished;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GTM+7")
+//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GTM+7")
     private Instant createdAt;
     private Instant updatedAt;
     private String createdBy;
