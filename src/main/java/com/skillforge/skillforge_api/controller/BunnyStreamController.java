@@ -3,6 +3,7 @@ package com.skillforge.skillforge_api.controller;
 import com.skillforge.skillforge_api.dto.request.CreateVideoRequest;
 import com.skillforge.skillforge_api.dto.response.ApiResponse;
 import com.skillforge.skillforge_api.dto.response.BunnyStreamVideoResponse;
+import com.skillforge.skillforge_api.dto.response.VideoDTO;
 import com.skillforge.skillforge_api.service.BunnyStreamService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -28,60 +29,30 @@ public class BunnyStreamController {
      * API để tạo và upload video trong một bước
      */
     @PostMapping("/videos/upload-complete")
-    public ResponseEntity<ApiResponse<BunnyStreamVideoResponse>> uploadCompleteVideo(
+    public ResponseEntity<VideoDTO> uploadCompleteVideo(
             @RequestParam("title") String title,
             @RequestParam("file") MultipartFile file,
             @RequestParam(value = "collectionId", required = false) String collectionId,
-            @RequestParam(value = "enabledResolutions", defaultValue = "true") boolean enabledResolutions) {
-
-        try {
-            // Validate file
-            if (file.isEmpty()) {
-                ApiResponse<BunnyStreamVideoResponse> response = ApiResponse.<BunnyStreamVideoResponse>builder()
-                        .success(false)
-                        .message("File is empty")
-                        .build();
-                return ResponseEntity.badRequest().body(response);
-            }
-
+            @RequestParam(value = "enabledResolutions", defaultValue = "true") boolean enabledResolutions) throws Exception {
             // 1. Tạo video
             CreateVideoRequest createRequest = CreateVideoRequest.builder()
                     .title(title)
                     .collectionId(collectionId)
                     .build();
-
             BunnyStreamVideoResponse video = bunnyStreamService.createVideo(createRequest);
             // 2. Upload file
             bunnyStreamService.uploadVideo(video.getGuid(), file, enabledResolutions);
-            ApiResponse<BunnyStreamVideoResponse> response = ApiResponse.<BunnyStreamVideoResponse>builder()
-                    .success(true)
-                    .message("Video created and uploaded successfully")
-                    .data(video)
-                    .build();
+            VideoDTO videoDTO = bunnyStreamService.getVideoPlayData(video.getGuid());
+            return ResponseEntity.status(HttpStatus.CREATED).body(videoDTO);
 
-
-
-
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            log.error("Error in complete upload process", e);
-
-            ApiResponse<BunnyStreamVideoResponse> response = ApiResponse.<BunnyStreamVideoResponse>builder()
-                    .success(false)
-                    .message("Failed to upload video")
-                    .error(e.getMessage())
-                    .build();
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
     }
     
     /**
      * API để lấy thông tin để phát video
      */
     @GetMapping("/videos/{videoId}/play")
-    public ResponseEntity<BunnyStreamVideoResponse> getVideoPlayInfo(@PathVariable String videoId) throws IOException, InterruptedException {
-        BunnyStreamVideoResponse videoResponse = bunnyStreamService.getVideoPlayData(videoId);
+    public ResponseEntity<VideoDTO> getVideoPlayInfo(@PathVariable String videoId) throws IOException, InterruptedException {
+        VideoDTO videoResponse = bunnyStreamService.getVideoPlayData(videoId);
         if (videoResponse == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }

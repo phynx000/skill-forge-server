@@ -1,14 +1,16 @@
 package com.skillforge.skillforge_api.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.skillforge.skillforge_api.config.BunnyStreamConfig;
 import com.skillforge.skillforge_api.dto.mapper.VideoMapper;
 import com.skillforge.skillforge_api.dto.request.CreateVideoRequest;
 import com.skillforge.skillforge_api.dto.response.BunnyStreamVideoResponse;
+import com.skillforge.skillforge_api.dto.response.VideoDTO;
 import com.skillforge.skillforge_api.entity.Video;
 import com.skillforge.skillforge_api.repository.VideoRepositoty;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +19,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 
 @Service
 @Slf4j
@@ -58,7 +61,8 @@ public class BunnyStreamService {
         if (response.statusCode() != 200 && response.statusCode() != 201) {
             throw new RuntimeException("Failed to create video: " + response.body());
         }
-        Video video = mapper.readValue(response.body(), Video.class);
+        BunnyStreamVideoResponse videoRes = mapper.readValue(response.body(), BunnyStreamVideoResponse.class);
+        Video video = videoMapper.resToEntity(videoRes);
         videoRepositoty.save(video);
 
         //
@@ -92,10 +96,8 @@ public class BunnyStreamService {
     }
 
 
-    /**
-     * Lấy dữ liệu video từ BunnyStream
-     */
-    public BunnyStreamVideoResponse getVideoPlayData(String videoId) throws IOException, InterruptedException {
+
+    public VideoDTO getVideoPlayData(String videoId) throws IOException, InterruptedException {
         String url = String.format("%s/library/%s/videos/%s/play",
                 config.getBaseUrl(), config.getLibraryId(), videoId);
 
@@ -108,21 +110,35 @@ public class BunnyStreamService {
                 .build();
 
         HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-
+        System.out.println("Response: " + response.body());
         if (response.statusCode() != 200) {
             throw new RuntimeException("Failed to get video: " + response.body());
         }
 
+        JSONObject jsonResponse = new JSONObject(response.body());
+        String videoPlaylistUrl = jsonResponse.getString("videoPlaylistUrl");
+        String thumbnailUrl = jsonResponse.getString("thumbnailUrl");
+//        String fallbackUrl = jsonResponse.getString("fallbackUrl");
+//        String playbackSpeeds = jsonResponse.getString("playbackSpeeds");
+        JSONObject videobj = jsonResponse.getJSONObject("video");
         ObjectMapper mapper = new ObjectMapper();
-        BunnyStreamVideoResponse bunnyStreamVideoResponse = mapper.readValue(response.body(), BunnyStreamVideoResponse.class);
+        VideoDTO videoDto = mapper.readValue(videobj.toString(), VideoDTO.class);
+
+
+
         Video video = videoRepositoty.findByGuid(videoId);
-        video.setPlayURL(bunnyStreamVideoResponse.getVideoPlaylistUrl());
-        video.setThumbnailUrl(bunnyStreamVideoResponse.getThumbnailUrl());
-        video.setDuration(bunnyStreamVideoResponse.getLength());
-        video.setPublic(bunnyStreamVideoResponse.isPublic());
-        video.setStatus(bunnyStreamVideoResponse.getStatus());
+        video.setTitle(videoDto.getTitle());
+        video.setVideoLibraryId(videoDto.getVideoLibraryId());
+        video.setAvailableResolutions(videoDto.getAvailableResolutions());
+        video.setGuid(videoDto.getGuid());
+        video.setPublic(videoDto.isPublic());
+        video.setStatus(videoDto.getStatus());
+        video.setPlayURL(videoPlaylistUrl);
+        video.setThumbnailUrl(thumbnailUrl);
+        video.setAvailableResolutions(videoDto.getAvailableResolutions());
         videoRepositoty.save(video);
-        return bunnyStreamVideoResponse;
+        videoDto = videoMapper.toDto(video);
+        return videoDto;
     }
 
     public Video handleFindVideoByVideoId(String videoId){
@@ -132,8 +148,7 @@ public class BunnyStreamService {
         }
         return video;
     }
-
-
+    
     /**
      * Lấy thông tin video
      */
@@ -157,7 +172,6 @@ public class BunnyStreamService {
         }
 
         ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
         return mapper.readValue(response.body(), BunnyStreamVideoResponse.class);
     }
 }

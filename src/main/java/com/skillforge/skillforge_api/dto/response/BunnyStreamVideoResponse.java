@@ -20,7 +20,6 @@ public class BunnyStreamVideoResponse {
     private int status;
     private int rotation;
     private String availableResolutions;
-    private boolean hasMP4Fallback;
     private String collectionId;
     private String thumbnailFileName;
     private String thumbnailUrl;

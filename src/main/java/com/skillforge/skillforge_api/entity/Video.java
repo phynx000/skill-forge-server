@@ -21,7 +21,7 @@ public class Video {
     private String title;
     private String playURL;
     private String thumbnailUrl;
-    private double duration; // Duration in seconds
+    private double length; // Duration in seconds
     private int status; // uploading, processing, ready, error
     private boolean isPublic; // Whether the video is public or private
     private Instant createdAt;
