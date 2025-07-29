@@ -22,6 +22,7 @@ public class LessonMapper {
                 .orElseThrow(() -> new RuntimeException("Section not found with ID: " + lessonRequest.getSectionId()));
         lesson.setSection(section);
         lesson.setOrderIndex(lessonRequest.getOrderIndex());
+        lesson.setCourse(section.getCourse());
         return lesson;
     }
 

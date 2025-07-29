@@ -23,5 +23,9 @@ public class Lesson {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "section_id", nullable = false)
     private Section section;
+
+    @JoinColumn(name = "course_id" , nullable = true)
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Course course;
     private int orderIndex;
 }

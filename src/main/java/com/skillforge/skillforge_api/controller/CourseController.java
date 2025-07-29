@@ -2,6 +2,7 @@ package com.skillforge.skillforge_api.controller;
 
 import com.skillforge.skillforge_api.dto.request.CourseCreateRequest;
 import com.skillforge.skillforge_api.dto.response.CourseDTO;
+import com.skillforge.skillforge_api.dto.response.CourseDetailDTO;
 import com.skillforge.skillforge_api.dto.response.ResultPaginationDTO;
 import com.skillforge.skillforge_api.service.CourseService;
 import com.skillforge.skillforge_api.utils.annotation.ApiMessage;
@@ -58,6 +59,13 @@ public class CourseController {
         Pageable pageable = PageRequest.of(current - 1, pageSize);
         ResultPaginationDTO coursesDto = this.courseService.getCoursesByCategoryId(categoryId, pageable);
         return ResponseEntity.ok().body(coursesDto);
+    }
+
+    @GetMapping("/courses/{id}")
+    @ApiMessage(value = "Fetch course by ID")
+    public ResponseEntity<CourseDetailDTO> getCourseById(@PathVariable Long id) {
+        CourseDetailDTO courseDetailDTO = this.courseService.getCourseById(id);
+        return ResponseEntity.ok().body(courseDetailDTO);
     }
 
 }

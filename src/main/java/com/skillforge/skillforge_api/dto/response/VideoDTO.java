@@ -29,26 +29,5 @@ public class VideoDTO {
     private Instant createdAt;
     private String hlsURL; // URL to play the video
 
-    @Override
-    public String toString() {
-        return "VideoDTO{" +
-                "id=" + id +
-                ", videoLibraryId=" + videoLibraryId +
-                ", guid='" + guid + '\'' +
-                ", title='" + title + '\'' +
-                ", isPublic=" + isPublic +
-                ", length=" + length +
-                ", status=" + status +
-                ", rotation=" + rotation +
-                ", availableResolutions='" + availableResolutions + '\'' +
-                ", hasMP4Fallback=" + hasMP4Fallback +
-                ", collectionId='" + collectionId + '\'' +
-                ", thumbnailFileName='" + thumbnailFileName + '\'' +
-                ", thumbnailUrl='" + thumbnailUrl + '\'' +
-                ", videoPlaylistUrl='" + videoPlaylistUrl + '\'' +
-                ", category='" + category + '\'' +
-                ", jitEncodingEnabled=" + jitEncodingEnabled +
-                ", createdAt=" + createdAt +
-                '}';
-    }
+
 }

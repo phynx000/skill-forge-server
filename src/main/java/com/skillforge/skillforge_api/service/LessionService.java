@@ -36,8 +36,9 @@ public class LessionService {
 
     }
 
-
-
-
+    public int getLessonCountByCourseId(Long courseId) {
+        List<Lesson> lessons = (List<Lesson>) lessonRepository.findByCourseId(courseId);
+        return lessons.size();
+    }
 
 }

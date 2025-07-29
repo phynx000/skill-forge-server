@@ -129,7 +129,8 @@ public class SecurityConfiguration {
                                         "api/v1/auth/refresh",
                                         "api/v1/categories",
                                         "api/v1/courses/category/{categoryId}",
-                                        "api/v1/courses"
+                                        "api/v1/courses",
+                                        "api/v1/courses/{id}"
                                 ).permitAll()
                                 .anyRequest().authenticated()
                 ) .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults())

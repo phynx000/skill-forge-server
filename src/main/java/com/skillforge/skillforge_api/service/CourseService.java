@@ -3,6 +3,7 @@ package com.skillforge.skillforge_api.service;
 import com.skillforge.skillforge_api.dto.mapper.CourseMapper;
 import com.skillforge.skillforge_api.dto.request.CourseCreateRequest;
 import com.skillforge.skillforge_api.dto.response.CourseDTO;
+import com.skillforge.skillforge_api.dto.response.CourseDetailDTO;
 import com.skillforge.skillforge_api.dto.response.Meta;
 import com.skillforge.skillforge_api.dto.response.ResultPaginationDTO;
 import com.skillforge.skillforge_api.entity.Course;
@@ -60,6 +61,12 @@ public class CourseService {
                 .map(courseMapper::toDto)
                 .toList());
         return result;
+    }
+
+    public CourseDetailDTO getCourseById(Long courseId) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new IllegalArgumentException("Course not found with id: " + courseId));
+        return courseMapper.toDetailDto(course);
     }
 
     @Transactional

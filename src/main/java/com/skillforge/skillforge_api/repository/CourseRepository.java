@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface CourseRepository extends JpaRepository<Course, Long> , JpaSpecificationExecutor<Course> {
     boolean existsBySlug(String slug);
     Page<Course> findByCategoryId(Long categoryId, Pageable pageable);
+    Optional<Course> findById(Long id);
 }

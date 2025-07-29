@@ -7,6 +7,6 @@ import java.util.Collection;
 
 public interface LessonRepository extends JpaRepository<Lesson, Long> {
     Collection<Lesson> findBySectionId(Long sectionId);
-
+    Collection<Lesson> findByCourseId(Long courseId);
 
 }

@@ -1,5 +1,6 @@
-package com.skillforge.skillforge_api.service;
+package com.skillforge.skillforge_api.config;
 
+import com.skillforge.skillforge_api.service.UserService;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;

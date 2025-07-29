@@ -14,7 +14,9 @@ public class CourseDTO {
     private String thumbnailUrl;
     private String categoryName;
     private String instructorName;
-    private int numberOfLessons;
     private String slug;
     private boolean isPublished;
+    private int numberOfSections;
+    private int numberOfLessons;
+
 }
