@@ -26,6 +26,7 @@ public class Video {
     private boolean isPublic; // Whether the video is public or private
     private Instant createdAt;
     private String availableResolutions; // JSON string of available resolutions
+    private String hlsUrl; // HLS streaming URL
 
     public Video() {
         // Default constructor

@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CourseService {
@@ -46,6 +47,21 @@ public class CourseService {
 
     }
 
+    public ResultPaginationDTO getCoursesByCategoryId(Long categoryId, Pageable pageable) {
+        Page<Course> courses = courseRepository.findByCategoryId(categoryId, pageable);
+        ResultPaginationDTO result = new ResultPaginationDTO();
+        Meta meta = new Meta();
+        meta.setPage(pageable.getPageNumber() + 1); // Convert to 1-based index for the response
+        meta.setPageSize(pageable.getPageSize());
+        meta.setPages(courses.getTotalPages());
+        meta.setTotalItems(courses.getTotalElements());
+        result.setMeta(meta);
+        result.setResults(courses.getContent().stream()
+                .map(courseMapper::toDto)
+                .toList());
+        return result;
+    }
+
     @Transactional
     public CourseDTO handleCreateCourse(CourseCreateRequest request) {
         Course course = courseMapper.toEntity(request);
@@ -73,6 +89,8 @@ public class CourseService {
         Course updatedCourse = courseRepository.save(existingCourse);
         return courseMapper.toDto(updatedCourse);
     }
+
+
 
 
 

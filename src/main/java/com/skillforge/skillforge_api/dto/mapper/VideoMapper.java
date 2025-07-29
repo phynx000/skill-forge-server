@@ -51,6 +51,7 @@ public class VideoMapper {
         dto.setVideoPlaylistUrl(video.getPlayURL());
         dto.setCreatedAt(video.getCreatedAt());
         dto.setThumbnailUrl(video.getThumbnailUrl());
+        dto.setHlsURL(video.getHlsUrl());
 
         return dto;
 

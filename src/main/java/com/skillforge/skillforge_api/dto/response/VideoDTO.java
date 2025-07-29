@@ -27,6 +27,7 @@ public class VideoDTO {
     private String category;
     private boolean jitEncodingEnabled;
     private Instant createdAt;
+    private String hlsURL; // URL to play the video
 
     @Override
     public String toString() {

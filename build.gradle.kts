@@ -34,6 +34,10 @@ dependencies {
 	implementation ("io.github.cdimascio:dotenv-java:3.0.0") // Replace with the latest version
 	implementation ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 	implementation ("org.json:json:20141113")
+	implementation("commons-codec:commons-codec:1.15")
+	implementation("org.apache.httpcomponents:httpclient:4.5")
+	implementation("org.apache.httpcomponents:httpcore:4.4.1")
+	implementation("io.tus.java.client:tus-java-client:0.5.1")
 	compileOnly("org.projectlombok:lombok")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("org.postgresql:postgresql")
