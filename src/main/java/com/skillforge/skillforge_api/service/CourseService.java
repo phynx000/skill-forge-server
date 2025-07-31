@@ -3,7 +3,7 @@ package com.skillforge.skillforge_api.service;
 import com.skillforge.skillforge_api.dto.mapper.CourseMapper;
 import com.skillforge.skillforge_api.dto.request.CourseCreateRequest;
 import com.skillforge.skillforge_api.dto.response.CourseDTO;
-import com.skillforge.skillforge_api.dto.response.Meta;
+import com.skillforge.skillforge_api.dto.response.CourseDetailDTO;
 import com.skillforge.skillforge_api.dto.response.ResultPaginationDTO;
 import com.skillforge.skillforge_api.entity.Course;
 import com.skillforge.skillforge_api.repository.CourseRepository;
@@ -11,8 +11,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class CourseService {
@@ -33,7 +31,7 @@ public class CourseService {
     public ResultPaginationDTO handleGetAllCourses(Pageable pageable) {
         Page<Course> courses = courseRepository.findAll(pageable);
         ResultPaginationDTO result = new ResultPaginationDTO();
-        Meta meta = new Meta();
+        ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();
         meta.setPage(pageable.getPageNumber()+ 1); // Convert to 1-based index for the response
         meta.setPageSize(pageable.getPageSize());
         meta.setPages(courses.getTotalPages());
@@ -44,6 +42,27 @@ public class CourseService {
                 .toList());
         return result;
 
+    }
+
+    public ResultPaginationDTO getCoursesByCategoryId(Long categoryId, Pageable pageable) {
+        Page<Course> courses = courseRepository.findByCategoryId(categoryId, pageable);
+        ResultPaginationDTO result = new ResultPaginationDTO();
+        ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();
+        meta.setPage(pageable.getPageNumber() + 1); // Convert to 1-based index for the response
+        meta.setPageSize(pageable.getPageSize());
+        meta.setPages(courses.getTotalPages());
+        meta.setTotalItems(courses.getTotalElements());
+        result.setMeta(meta);
+        result.setResults(courses.getContent().stream()
+                .map(courseMapper::toDto)
+                .toList());
+        return result;
+    }
+
+    public CourseDetailDTO getCourseById(Long courseId) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new IllegalArgumentException("Course not found with id: " + courseId));
+        return courseMapper.toDetailDto(course);
     }
 
     @Transactional
@@ -73,6 +92,8 @@ public class CourseService {
         Course updatedCourse = courseRepository.save(existingCourse);
         return courseMapper.toDto(updatedCourse);
     }
+
+
 
 
 

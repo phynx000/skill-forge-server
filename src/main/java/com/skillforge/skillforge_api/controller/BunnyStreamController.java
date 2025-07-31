@@ -51,7 +51,7 @@ public class BunnyStreamController {
      * API để lấy thông tin để phát video
      */
     @GetMapping("/videos/{videoId}/play")
-    public ResponseEntity<VideoDTO> getVideoPlayInfo(@PathVariable String videoId) throws IOException, InterruptedException {
+    public ResponseEntity<VideoDTO> getVideoPlayInfo(@PathVariable String videoId) throws Exception {
         VideoDTO videoResponse = bunnyStreamService.getVideoPlayData(videoId);
         if (videoResponse == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

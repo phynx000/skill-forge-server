@@ -40,5 +40,7 @@ bunny:
     library-id: 469408
     base-url: "https://video.bunnycdn.com"
     bunny-cdn-key: ${BUNNY_CDN_KEY:defaultBunnyCdnKey}
+    bunny-cdn-host: "vz-11106c72-014.b-cdn.net"
+    bunny-auth-key: "7aec43d5-f3be-440f-b740-55fd5e455cf4"
 
 

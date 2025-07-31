@@ -26,6 +26,7 @@ public class Video {
     private boolean isPublic; // Whether the video is public or private
     private Instant createdAt;
     private String availableResolutions; // JSON string of available resolutions
+    private String hlsUrl; // HLS streaming URL
 
     public Video() {
         // Default constructor
@@ -33,7 +34,7 @@ public class Video {
 
 //    @OneToOne
 //    @JoinColumn(name = "lession_id", nullable = false)
-//    private Lession lession;
+//    private Lesson lession;
 //
 //    @ManyToOne
 //    @JoinColumn(name = "course_id", nullable = false)

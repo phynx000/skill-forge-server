@@ -8,9 +8,11 @@ import com.skillforge.skillforge_api.dto.response.BunnyStreamVideoResponse;
 import com.skillforge.skillforge_api.dto.response.VideoDTO;
 import com.skillforge.skillforge_api.entity.Video;
 import com.skillforge.skillforge_api.repository.VideoRepositoty;
+import com.skillforge.skillforge_api.utils.BunnyTokenSigner;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,11 +31,19 @@ public class BunnyStreamService {
     private final HttpClient httpClient;
     private final VideoMapper videoMapper;
     private final VideoRepositoty videoRepositoty;
+    private final BunnyTokenSigner tokenSigner;
 
-    public BunnyStreamService(BunnyStreamConfig config, VideoMapper videoMapper, VideoRepositoty videoRepositoty) {
+    @Value("${bunny.stream.bunny-cdn-host}")
+    private String bunnyCdnHost;
+
+    @Value("${bunny.stream.bunny-auth-key}")
+    private String securityKey;
+
+    public BunnyStreamService(BunnyStreamConfig config, VideoMapper videoMapper, VideoRepositoty videoRepositoty, BunnyTokenSigner tokenSigner) {
         this.config = config;
         this.videoMapper = videoMapper;
         this.videoRepositoty = videoRepositoty;
+        this.tokenSigner = tokenSigner;
         this.httpClient = HttpClient.newHttpClient();
     }
 
@@ -95,9 +105,18 @@ public class BunnyStreamService {
         log.info("Video uploaded successfully. Response: {}", response.body());
     }
 
+    public String getVideoLink(String videoId) {
+        var allowedPath = "/" + videoId + "/";
+        // Kiểm tra xem securityKey có được cấu hình không
+        System.out.println("Security Key: " + securityKey);
+        var videoUrl = String.format("https://%s/%s/playlist.m3u8", bunnyCdnHost, videoId);
+        return tokenSigner.signUrl(videoUrl, securityKey, allowedPath);
+    }
 
 
-    public VideoDTO getVideoPlayData(String videoId) throws IOException, InterruptedException {
+
+    @Transactional
+    public VideoDTO getVideoPlayData(String videoId) throws Exception {
         String url = String.format("%s/library/%s/videos/%s/play",
                 config.getBaseUrl(), config.getLibraryId(), videoId);
 
@@ -124,8 +143,6 @@ public class BunnyStreamService {
         ObjectMapper mapper = new ObjectMapper();
         VideoDTO videoDto = mapper.readValue(videobj.toString(), VideoDTO.class);
 
-
-
         Video video = videoRepositoty.findByGuid(videoId);
         video.setTitle(videoDto.getTitle());
         video.setVideoLibraryId(videoDto.getVideoLibraryId());
@@ -134,12 +151,22 @@ public class BunnyStreamService {
         video.setPublic(videoDto.isPublic());
         video.setStatus(videoDto.getStatus());
         video.setPlayURL(videoPlaylistUrl);
+        video.setHlsUrl(getVideoLink(videoId));
         video.setThumbnailUrl(thumbnailUrl);
         video.setAvailableResolutions(videoDto.getAvailableResolutions());
         videoRepositoty.save(video);
         videoDto = videoMapper.toDto(video);
         return videoDto;
     }
+
+//    public String generateSignedUrl(String streamHostname, String path, long validDurationSeconds) throws Exception {
+//        // Kiểm tra xem securityKey có được cấu hình không
+//        if (securityKey == null || securityKey.isEmpty()) {
+//            throw new RuntimeException("Security key is not configured");
+//        }
+//        // Tạo URL đã ký
+//        return StreamUtils.generateSignedUrl(streamHostname, path, securityKey, validDurationSeconds);
+//    }
 
     public Video handleFindVideoByVideoId(String videoId){
         Video video = videoRepositoty.findByGuid(videoId);
