@@ -1,10 +1,8 @@
 package com.skillforge.skillforge_api.service;
 
-import com.skillforge.skillforge_api.dto.mapper.CourseMapper;
 import com.skillforge.skillforge_api.dto.mapper.UserMapper;
 import com.skillforge.skillforge_api.dto.request.UserCreateRequest;
 import com.skillforge.skillforge_api.dto.request.UserUpdateReq;
-import com.skillforge.skillforge_api.dto.response.Meta;
 import com.skillforge.skillforge_api.dto.response.ResultPaginationDTO;
 import com.skillforge.skillforge_api.dto.response.UserDTO;
 import com.skillforge.skillforge_api.entity.User;
@@ -14,7 +12,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,7 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -44,7 +40,7 @@ public class UserService {
     public ResultPaginationDTO getAllUsersFromDatabase(Specification<User> spec, Pageable pageable) {
         Page<User> usersPage = userRepository.findAll(spec,pageable);
         ResultPaginationDTO result = new ResultPaginationDTO();
-        Meta meta = new Meta();
+        ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();
         meta.setPage(pageable.getPageNumber()+ 1); // Spring Data JPA uses 0-based index
         meta.setPageSize(pageable.getPageSize());
         meta.setPages(usersPage.getTotalPages());

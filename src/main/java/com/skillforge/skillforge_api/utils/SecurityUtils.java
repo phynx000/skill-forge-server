@@ -3,6 +3,7 @@ package com.skillforge.skillforge_api.utils;
 
 import com.nimbusds.jose.util.Base64;
 import com.skillforge.skillforge_api.dto.response.ResponseLoginDTO;
+import com.skillforge.skillforge_api.entity.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -139,6 +140,7 @@ public class SecurityUtils {
                 .filter(authentication -> authentication.getCredentials() instanceof String)
                 .map(authentication -> (String) authentication.getCredentials());
     }
+
 
     /**
      * Check if a user is authenticated.

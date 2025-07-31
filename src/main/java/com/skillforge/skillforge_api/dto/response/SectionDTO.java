@@ -3,6 +3,8 @@ package com.skillforge.skillforge_api.dto.response;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class SectionDTO {
@@ -11,5 +13,6 @@ public class SectionDTO {
     private String description;
     private int orderIndex;
     private Long courseId;
+    private List<LessonDTO> lessons;
 
 }

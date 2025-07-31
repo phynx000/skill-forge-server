@@ -4,7 +4,6 @@ import com.skillforge.skillforge_api.dto.mapper.CourseMapper;
 import com.skillforge.skillforge_api.dto.request.CourseCreateRequest;
 import com.skillforge.skillforge_api.dto.response.CourseDTO;
 import com.skillforge.skillforge_api.dto.response.CourseDetailDTO;
-import com.skillforge.skillforge_api.dto.response.Meta;
 import com.skillforge.skillforge_api.dto.response.ResultPaginationDTO;
 import com.skillforge.skillforge_api.entity.Course;
 import com.skillforge.skillforge_api.repository.CourseRepository;
@@ -12,9 +11,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CourseService {
@@ -35,7 +31,7 @@ public class CourseService {
     public ResultPaginationDTO handleGetAllCourses(Pageable pageable) {
         Page<Course> courses = courseRepository.findAll(pageable);
         ResultPaginationDTO result = new ResultPaginationDTO();
-        Meta meta = new Meta();
+        ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();
         meta.setPage(pageable.getPageNumber()+ 1); // Convert to 1-based index for the response
         meta.setPageSize(pageable.getPageSize());
         meta.setPages(courses.getTotalPages());
@@ -51,7 +47,7 @@ public class CourseService {
     public ResultPaginationDTO getCoursesByCategoryId(Long categoryId, Pageable pageable) {
         Page<Course> courses = courseRepository.findByCategoryId(categoryId, pageable);
         ResultPaginationDTO result = new ResultPaginationDTO();
-        Meta meta = new Meta();
+        ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();
         meta.setPage(pageable.getPageNumber() + 1); // Convert to 1-based index for the response
         meta.setPageSize(pageable.getPageSize());
         meta.setPages(courses.getTotalPages());

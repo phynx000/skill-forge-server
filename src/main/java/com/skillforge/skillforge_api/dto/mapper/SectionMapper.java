@@ -5,15 +5,22 @@ import com.skillforge.skillforge_api.dto.response.SectionDTO;
 import com.skillforge.skillforge_api.entity.Course;
 import com.skillforge.skillforge_api.entity.Section;
 import com.skillforge.skillforge_api.repository.CourseRepository;
+import com.skillforge.skillforge_api.service.LessionService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
 
 
 @Component
 public class SectionMapper {
-    CourseRepository courseRepository;
+    private final CourseRepository courseRepository;
+    private final LessionService lessionService;
 
-    public SectionMapper(CourseRepository courseRepository) {
+
+    public SectionMapper(CourseRepository courseRepository, @Lazy LessionService lessionService) {
         this.courseRepository = courseRepository;
+        this.lessionService = lessionService;
     }
 
     public Section toEntity(SectionRequest request) {
@@ -35,6 +42,11 @@ public class SectionMapper {
         sectionDTO.setDescription(section.getDescription());
         sectionDTO.setOrderIndex(section.getOrderIndex());
         sectionDTO.setCourseId(section.getCourse().getId());
+        try {
+            sectionDTO.setLessons(lessionService.getLessonsBySectionId(section.getId()));
+        } catch (RuntimeException e) {
+            sectionDTO.setLessons(Collections.emptyList());
+        }
         return sectionDTO;
     }
 

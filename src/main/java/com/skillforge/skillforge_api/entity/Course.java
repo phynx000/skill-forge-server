@@ -21,6 +21,7 @@ public class Course {
 
     @Column(nullable = false) // title should not be null
     private double price;
+    // price should not be null
 
     @Column(unique = false, length = 100) // slug should be unique and not null
     private String slug; // unique identifier for the course, often used in URLs

@@ -55,10 +55,10 @@ public class GlobalExeption {
         return buildError(HttpStatus.BAD_REQUEST, "Bad Request", e.getMessage());
     }
 
-//    @ExceptionHandler(Exception.class) // fallback
-//    public ResponseEntity<Object> handleOther(Exception e) {
-//        return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error", e.getMessage());
-//    }
+    @ExceptionHandler(Exception.class) // fallback
+    public ResponseEntity<Object> handleOther(Exception e) {
+        return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error", e.getMessage());
+    }
 
 
     private ResponseEntity<Object> buildError(HttpStatus status, String error, Object message) {

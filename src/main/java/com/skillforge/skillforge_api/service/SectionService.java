@@ -23,9 +23,6 @@ public class SectionService {
 
     public List<Section> getSectionsByCourseId(Long courseId) {
         List<Section> sections =  sectionRepository.findByCourseIdOrderByOrderIndexAsc(courseId);
-        if (sections.isEmpty()) {
-            throw new RuntimeException("No sections found for course with ID: " + courseId);
-        }
         return sections;
     }
 

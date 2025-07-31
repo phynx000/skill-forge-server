@@ -35,4 +35,14 @@ public class LessonMapper {
         return lessonDTO;
     }
 
+    public LessonDTO toPlayerDTO(Lesson lesson) {
+        LessonDTO lessonDTO = toDTO(lesson);
+        lessonDTO.setVideoUrl(lesson.getVideo().getHlsUrl());
+        return lessonDTO;
+    }
+
+
+
+
+
 }

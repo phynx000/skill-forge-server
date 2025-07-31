@@ -21,7 +21,7 @@ public class LessionService {
     }
 
     public List<LessonDTO> getLessonsBySectionId(Long sectionId) {
-        List<Lesson> lessons = (List<Lesson>) lessonRepository.findBySectionId(sectionId);
+        List<Lesson> lessons = (List<Lesson>) lessonRepository.findBySectionIdOrderByOrderIndexAsc(sectionId);
         if (lessons.isEmpty()) {
             throw new RuntimeException("No lessons found for section with ID: " + sectionId);
         }

@@ -28,4 +28,7 @@ public class Lesson {
     @ManyToOne(cascade = CascadeType.ALL)
     private Course course;
     private int orderIndex;
+
+    @Column(name = "completed", nullable = true)
+    private boolean completed;
 }

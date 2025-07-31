@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Collection;
 
 public interface LessonRepository extends JpaRepository<Lesson, Long> {
-    Collection<Lesson> findBySectionId(Long sectionId);
+    Collection<Lesson> findBySectionIdOrderByOrderIndexAsc(Long sectionId);
     Collection<Lesson> findByCourseId(Long courseId);
 
 }

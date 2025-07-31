@@ -12,9 +12,7 @@ public class LessonDTO {
     private String title;
     private Long sectionId;
     private int orderIndex;
-
-
-
-
+    private String videoUrl;
+    private boolean completed;
 
 }
