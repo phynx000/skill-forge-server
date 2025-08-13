@@ -73,7 +73,7 @@ public class UserController {
     @GetMapping("/bio/{id}")
     @ApiMessage(value = "fetch user bio")
     public ResponseEntity<BioDTO> getUserBio (@PathVariable Long id) {
-        BioDTO user = userService.getUserBio(id);
+        BioDTO user = userService.getUserBioByCourseId(id);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
