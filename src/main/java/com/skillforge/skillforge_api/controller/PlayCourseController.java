@@ -1,5 +1,6 @@
 package com.skillforge.skillforge_api.controller;
 
+import com.skillforge.skillforge_api.dto.response.LessonDTO;
 import com.skillforge.skillforge_api.dto.response.SectionDTO;
 import com.skillforge.skillforge_api.service.PlayCourseService;
 import org.springframework.http.ResponseEntity;
@@ -22,4 +23,8 @@ public class PlayCourseController {
     List<SectionDTO>  sectionDTOs = this.playCourseService.getListSection(courseId);
         return ResponseEntity.ok(sectionDTOs);
     }
+
+
+
+
 }

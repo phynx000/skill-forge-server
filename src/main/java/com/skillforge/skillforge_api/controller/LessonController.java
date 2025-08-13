@@ -30,4 +30,14 @@ public class LessonController {
         return ResponseEntity.ok(createdLesson);
     }
 
+    @GetMapping("/play-course/lesson/{lessonId}")
+    public ResponseEntity<LessonDTO> getLessonDetails(
+            @PathVariable("lessonId") Long lessonId) {
+        LessonDTO dto = lessionService.getLessonDetails(lessonId);
+        if (dto != null) {
+            return ResponseEntity.ok(dto);
+        }
+        return null;
+    }
+
 }

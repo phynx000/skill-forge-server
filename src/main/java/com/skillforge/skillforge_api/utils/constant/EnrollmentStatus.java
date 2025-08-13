@@ -1,4 +1,4 @@
-package com.skillforge.skillforge_api.entity.ENUM;
+package com.skillforge.skillforge_api.utils.constant;
 
 public enum EnrollmentStatus {
     ENROLLED, // đã đăng ký nhưng Chưa hoạt động

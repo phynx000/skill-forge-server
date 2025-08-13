@@ -159,14 +159,6 @@ public class BunnyStreamService {
         return videoDto;
     }
 
-//    public String generateSignedUrl(String streamHostname, String path, long validDurationSeconds) throws Exception {
-//        // Kiểm tra xem securityKey có được cấu hình không
-//        if (securityKey == null || securityKey.isEmpty()) {
-//            throw new RuntimeException("Security key is not configured");
-//        }
-//        // Tạo URL đã ký
-//        return StreamUtils.generateSignedUrl(streamHostname, path, securityKey, validDurationSeconds);
-//    }
 
     public Video handleFindVideoByVideoId(String videoId){
         Video video = videoRepositoty.findByGuid(videoId);

@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class ResponseLoginDTO {
@@ -21,6 +23,7 @@ public class ResponseLoginDTO {
         private String username;
         private String fullName;
         private String email;
+        private List<String> roles;
 
         public UserLogin() {
 
@@ -33,6 +36,18 @@ public class ResponseLoginDTO {
     @NoArgsConstructor
     public static class UserGetAccount {
         private UserLogin user;
+    }
+
+
+    @Setter
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserInsideToken {
+        private Long id;
+        private String username;
+        private String fullName;
+        private String email;
     }
 
 }

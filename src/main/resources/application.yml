@@ -37,10 +37,16 @@ jwt:
 bunny:
   stream:
     access-key: ${BUNNY_API_KEY:defaultBunnyApiKey}
-    library-id: 469408
+    library-id: ${BUNNY_LIBRARY_ID:defaultBunnyLibraryId}
     base-url: "https://video.bunnycdn.com"
     bunny-cdn-key: ${BUNNY_CDN_KEY:defaultBunnyCdnKey}
-    bunny-cdn-host: "vz-11106c72-014.b-cdn.net"
-    bunny-auth-key: "7aec43d5-f3be-440f-b740-55fd5e455cf4"
+    bunny-cdn-host: ${BUNNY_CDN_HOST:defaultBunnyCdnHost}
+    bunny-auth-key: ${TOKEN_AUTH_KEY_BUNNY:defaultBunnyAuthKey}
+
+vnpay:
+  tmn-code: ${VNPAY_TMN_CODE:defaultTmnCode}
+  hash-secret: ${VNPAY_HASH_SECRET:defaultHashSecret}
+  pay-url: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
+  return-url: "http://localhost:8080/api/payments/vnpay/callback"
 
 

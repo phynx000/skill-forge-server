@@ -1,8 +1,10 @@
 package com.skillforge.skillforge_api.service;
 
+import com.skillforge.skillforge_api.dto.mapper.BioMapper;
 import com.skillforge.skillforge_api.dto.mapper.UserMapper;
 import com.skillforge.skillforge_api.dto.request.UserCreateRequest;
 import com.skillforge.skillforge_api.dto.request.UserUpdateReq;
+import com.skillforge.skillforge_api.dto.response.BioDTO;
 import com.skillforge.skillforge_api.dto.response.ResultPaginationDTO;
 import com.skillforge.skillforge_api.dto.response.UserDTO;
 import com.skillforge.skillforge_api.entity.User;
@@ -20,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -28,25 +31,38 @@ public class UserService {
     UserRepository userRepository;
     UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final RoleService roleService;
+    private final BioMapper bioMapper;
 
 
 
-    public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
+
+    public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, RoleService roleService, BioMapper bioMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
+        this.roleService = roleService;
+        this.bioMapper = bioMapper;
     }
 
     public ResultPaginationDTO getAllUsersFromDatabase(Specification<User> spec, Pageable pageable) {
         Page<User> usersPage = userRepository.findAll(spec,pageable);
         ResultPaginationDTO result = new ResultPaginationDTO();
         ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();
+
         meta.setPage(pageable.getPageNumber()+ 1); // Spring Data JPA uses 0-based index
         meta.setPageSize(pageable.getPageSize());
+
         meta.setPages(usersPage.getTotalPages());
         meta.setTotalItems(usersPage.getTotalElements());
+
         result.setMeta(meta);
-        result.setResults(usersPage.getContent());
+
+        List<UserDTO> listUsers = usersPage.getContent().stream()
+                .map(userMapper::toDto)
+                .toList();
+        result.setResults(listUsers);
+
         return result;
     }
 
@@ -66,6 +82,11 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         String hashed = user.getPassword();
 
+        // check role
+        if (user.getRoles() == null || user.getRoles().isEmpty()) {
+            user.setRoles(roleService.getDefaultRolesForUser());
+        }
+
         User savedUser = userRepository.save(user);
         return userMapper.toDto(savedUser);
     }
@@ -78,6 +99,7 @@ public class UserService {
             throw new EntityNotFoundException("User not found with id: " + request.getId());
         }
         currentUser = userMapper.updateEntity(currentUser, request);
+
         userRepository.save(currentUser);
         UserDTO userDTO = userMapper.toDto(currentUser);
 
@@ -144,4 +166,14 @@ public class UserService {
         throw new UsernameNotFoundException("Cannot find current user from principal");
     }
 
+
+    public BioDTO getUserBio(Long userId) {
+        User user = fetchUserById(userId);
+        if (user == null) {
+            throw new EntityNotFoundException("User not found with id: " + userId);
+        }
+
+
+        return bioMapper.toBioDTO(user);
+    }
 }

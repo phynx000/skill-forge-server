@@ -5,14 +5,17 @@ import com.skillforge.skillforge_api.dto.response.LessonDTO;
 import com.skillforge.skillforge_api.entity.Lesson;
 import com.skillforge.skillforge_api.entity.Section;
 import com.skillforge.skillforge_api.repository.SectionRepository;
+import com.skillforge.skillforge_api.service.BunnyStreamService;
 import org.springframework.stereotype.Component;
 
 @Component
 public class LessonMapper {
     SectionRepository sectionRepository;
+   private final BunnyStreamService bunnyStreamService;
 
-    public LessonMapper(SectionRepository sectionRepository) {
+    public LessonMapper(SectionRepository sectionRepository, BunnyStreamService bunnyStreamService) {
         this.sectionRepository = sectionRepository;
+        this.bunnyStreamService = bunnyStreamService;
     }
 
     public Lesson toEntity(LessonRequest lessonRequest) throws Throwable {
@@ -37,7 +40,9 @@ public class LessonMapper {
 
     public LessonDTO toPlayerDTO(Lesson lesson) {
         LessonDTO lessonDTO = toDTO(lesson);
-        lessonDTO.setVideoUrl(lesson.getVideo().getHlsUrl());
+        String newHlsLink =  bunnyStreamService.getVideoLink(lesson.getVideo().getGuid());
+        System.out.println("HLS Link: " + newHlsLink);
+        lessonDTO.setVideoUrl(newHlsLink);
         return lessonDTO;
     }
 

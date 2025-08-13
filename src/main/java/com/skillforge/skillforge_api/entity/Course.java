@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Getter
@@ -29,6 +30,9 @@ public class Course {
     @Column(columnDefinition = "TEXT")
     private String description;
     private String thumbnailUrl;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Section> sections;
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)

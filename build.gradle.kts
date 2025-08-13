@@ -38,6 +38,7 @@ dependencies {
 	implementation("org.apache.httpcomponents:httpclient:4.5")
 	implementation("org.apache.httpcomponents:httpcore:4.4.1")
 	implementation("io.tus.java.client:tus-java-client:0.5.1")
+	implementation("com.vladmihalcea:hibernate-types-60:2.21.0")
 	compileOnly("org.projectlombok:lombok")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("org.postgresql:postgresql")

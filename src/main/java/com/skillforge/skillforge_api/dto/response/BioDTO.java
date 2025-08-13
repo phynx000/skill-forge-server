@@ -1,6 +1,8 @@
 package com.skillforge.skillforge_api.dto.response;
 
+
 import com.skillforge.skillforge_api.entity.Skill;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,22 +10,25 @@ import java.util.List;
 
 @Getter
 @Setter
-public class UserDTO {
-    private Long id;
-    private String username;
+@AllArgsConstructor
+public class BioDTO {
     private String fullName;
-    private int age;
-    private String email;
-    private String gender;
-    private RoleUserDTO role;
     private String description;
     private List<Skill> skills;
+    private List<EducationDTO> education;
 
+    public BioDTO() {
+
+    }
 
     @Getter
     @Setter
-    public static class RoleUserDTO {
+    @AllArgsConstructor
+    public static class EducationDTO {
         private Long id;
-        private List<String> name;
+        private String degree;
+        private String institution;
+        private String major;
+        private int year;
     }
 }

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Getter
@@ -20,9 +21,12 @@ public class Section {
     private String description;
     private int orderIndex;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
+
+    @OneToMany(mappedBy = "section", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Lesson> lessons;
 
     private Instant createdAt;
     private String createdBy;

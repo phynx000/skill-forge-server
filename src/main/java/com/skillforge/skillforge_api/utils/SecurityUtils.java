@@ -59,10 +59,15 @@ public class SecurityUtils {
     }
 
 
-    public String createAccessToken(String email, ResponseLoginDTO.UserLogin userLogin) {
+    public String createAccessToken(String email, ResponseLoginDTO dto) {
 
         Instant now = Instant.now();
         Instant validity = now.plus(this.jwtExpiration, ChronoUnit.SECONDS);
+        ResponseLoginDTO.UserInsideToken userInsideToken = new ResponseLoginDTO.UserInsideToken();
+        userInsideToken.setId(dto.getUser().getId());
+        userInsideToken.setUsername(dto.getUser().getUsername());
+        userInsideToken.setFullName(dto.getUser().getFullName());
+        userInsideToken.setEmail(dto.getUser().getEmail());
 
 //        List<String> roles = authentication.getAuthorities().stream()
 //                .map(GrantedAuthority::getAuthority)
@@ -79,7 +84,7 @@ public class SecurityUtils {
                 .issuedAt(now)
                 .expiresAt(validity)
                 .subject(email)
-                .claim("user", userLogin)
+                .claim("user", userInsideToken)
                 .claim("permissions", listAuthorities)
                 .build();
 
