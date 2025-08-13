@@ -2,6 +2,7 @@ package com.skillforge.skillforge_api.controller;
 
 import com.skillforge.skillforge_api.dto.request.UserCreateRequest;
 import com.skillforge.skillforge_api.dto.request.UserUpdateReq;
+import com.skillforge.skillforge_api.dto.response.BioDTO;
 import com.skillforge.skillforge_api.dto.response.ResultPaginationDTO;
 import com.skillforge.skillforge_api.dto.response.UserDTO;
 import com.skillforge.skillforge_api.entity.User;
@@ -67,6 +68,17 @@ public class UserController {
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         this.userService.handleDeleteUser(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("User deleted successfully");  
+    }
+
+    @GetMapping("/bio/{id}")
+    @ApiMessage(value = "fetch user bio")
+    public ResponseEntity<BioDTO> getUserBio (@PathVariable Long id) {
+        BioDTO user = userService.getUserBio(id);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
 }

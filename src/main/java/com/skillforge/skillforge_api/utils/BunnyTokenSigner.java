@@ -42,7 +42,7 @@ public class BunnyTokenSigner {
      * @return The expiration timestamp as a string.
      */
     public String calculateExpirationTimestamp() {
-        return String.valueOf(Instant.now().getEpochSecond() + 86400L);
+        return String.valueOf(Instant.now().getEpochSecond() + 30L); // 30 seconds expiration
     }
 
 

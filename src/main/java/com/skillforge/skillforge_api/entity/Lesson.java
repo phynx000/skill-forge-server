@@ -20,7 +20,7 @@ public class Lesson {
     @JoinColumn(name = "video_id", nullable = true)
     private Video video;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "section_id", nullable = false)
     private Section section;
 

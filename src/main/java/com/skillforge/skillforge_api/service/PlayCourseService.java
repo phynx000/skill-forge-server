@@ -32,7 +32,6 @@ public class PlayCourseService {
 
     public List<SectionDTO> getListSection(Long courseId) {
         List<Section> sections = sectionRepository.findByCourseIdOrderByOrderIndexAsc(courseId);
-
         List<SectionDTO> sectionDTOs = sections.stream()
                 .map(section -> sectionMapper.toDto(section))// toDto: Section -> SectionDTO
                 .toList();
@@ -49,9 +48,10 @@ public class PlayCourseService {
     public List<LessonDTO> toLessonDTOList (Long sectionId) {
         List<Lesson> lessons = (List<Lesson>) lessonRepository.findBySectionIdOrderByOrderIndexAsc(sectionId);
         List<LessonDTO> lessonDTOs = lessons.stream().map(
-                lesson -> lessonMapper.toPlayerDTO(lesson) // toDto: Lesson -> LessonDTO
+                lesson -> lessonMapper.toDTO(lesson) // toDto: Lesson -> LessonDTO
         ).toList();
         return lessonDTOs;
-
     }
+
+
 }

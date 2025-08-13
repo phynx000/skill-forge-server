@@ -4,12 +4,11 @@ import com.skillforge.skillforge_api.dto.mapper.EnrollmentMapper;
 import com.skillforge.skillforge_api.dto.request.EnrollmentRequest;
 import com.skillforge.skillforge_api.dto.response.EnrollmenrtsDTO;
 import com.skillforge.skillforge_api.entity.Course;
-import com.skillforge.skillforge_api.entity.ENUM.EnrollmentStatus;
+import com.skillforge.skillforge_api.utils.constant.EnrollmentStatus;
 import com.skillforge.skillforge_api.entity.Enrollments;
 import com.skillforge.skillforge_api.entity.User;
 import com.skillforge.skillforge_api.repository.CourseRepository;
 import com.skillforge.skillforge_api.repository.EnrollmentRepository;
-import com.skillforge.skillforge_api.utils.SecurityUtils;
 import org.springframework.stereotype.Service;
 
 @Service

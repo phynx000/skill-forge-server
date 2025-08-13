@@ -1,7 +1,7 @@
 package com.skillforge.skillforge_api.dto.response;
 
 
-import com.skillforge.skillforge_api.entity.ENUM.EnrollmentStatus;
+import com.skillforge.skillforge_api.utils.constant.EnrollmentStatus;
 import lombok.Getter;
 import lombok.Setter;
 

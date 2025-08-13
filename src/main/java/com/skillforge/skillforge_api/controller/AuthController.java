@@ -54,12 +54,15 @@ public class AuthController {
                     currenUser.getId(),
                     currenUser.getUsername(),
                     currenUser.getFullName(),
-                    currenUser.getEmail()
+                    currenUser.getEmail(),
+                    currenUser.getRoles().stream()
+                            .map(role -> role.getName())
+                            .toList()
             );
             ResponseLoginDTO responseLoginDTO = new ResponseLoginDTO();
             responseLoginDTO.setUser(userLogin);
 
-            String accessToken = this.securityUtils.createAccessToken(authentication.getName(), responseLoginDTO.getUser());
+            String accessToken = this.securityUtils.createAccessToken(authentication.getName(), responseLoginDTO);
             responseLoginDTO.setAccessToken(accessToken);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -139,13 +142,16 @@ public class AuthController {
                 currentUser.getId(),
                 currentUser.getUsername(),
                 currentUser.getFullName(),
-                currentUser.getEmail()
+                currentUser.getEmail(),
+                currentUser.getRoles().stream()
+                        .map(role -> role.getName())
+                        .toList()
         );
 
         ResponseLoginDTO responseLoginDTO = new ResponseLoginDTO();
         responseLoginDTO.setUser(userLogin);
 
-        String accessToken = this.securityUtils.createAccessToken(email, responseLoginDTO.getUser());
+        String accessToken = this.securityUtils.createAccessToken(email, responseLoginDTO);
         responseLoginDTO.setAccessToken(accessToken);
 
         // create refresh token

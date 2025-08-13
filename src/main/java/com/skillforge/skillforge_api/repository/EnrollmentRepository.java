@@ -1,6 +1,6 @@
 package com.skillforge.skillforge_api.repository;
 
-import com.skillforge.skillforge_api.entity.ENUM.EnrollmentStatus;
+import com.skillforge.skillforge_api.utils.constant.EnrollmentStatus;
 import com.skillforge.skillforge_api.entity.Enrollments;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

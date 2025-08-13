@@ -6,36 +6,36 @@ import com.skillforge.skillforge_api.utils.constant.PaymentMethod;
 import com.skillforge.skillforge_api.utils.constant.PaymentStatus;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.ThreadLocalRandom;
 
-public class EWalletPaymentStrategy implements PaymentStrategy {
-    
+public class DebitCardPaymentStrategy implements PaymentStrategy {
+
 
     @Override
     public PaymentDTO processPayment(PaymentRequestDTO request) {
 
         try {
-            // Validate e-wallet info
-            validateEWalletInfo(request.getEWalletInfo());
+            // Validate debit card info
+            validateDebitCardInfo(request.getDebitCardInfo());
 
-            // Process based on wallet provider
-            String paymentUrl = processWithWalletProvider(request);
+            // Simulate payment processing with bank gateway
+            boolean paymentSuccess = processWithBankGateway(request);
 
             return PaymentDTO.builder()
                     .transactionId(generateTransactionId())
-                    .status(PaymentStatus.PENDING) // E-wallet usually requires redirect
-                    .paymentMethod(PaymentMethod.E_WALLET)
+                    .status(paymentSuccess ? PaymentStatus.SUCCESS : PaymentStatus.FAILED)
+                    .paymentMethod(PaymentMethod.DEBIT_CARD)
                     .amount(request.getAmount())
                     .currency(request.getCurrency())
                     .createdAt(LocalDateTime.now())
-                    .message("Redirect to wallet provider for payment")
-                    .paymentUrl(paymentUrl)
+                    .message(paymentSuccess ? "Payment successful" : "Payment failed")
                     .build();
 
         } catch (Exception e) {
             return PaymentDTO.builder()
                     .transactionId(generateTransactionId())
                     .status(PaymentStatus.FAILED)
-                    .paymentMethod(PaymentMethod.E_WALLET)
+                    .paymentMethod(PaymentMethod.DEBIT_CARD)
                     .amount(request.getAmount())
                     .currency(request.getCurrency())
                     .createdAt(LocalDateTime.now())
@@ -44,21 +44,19 @@ public class EWalletPaymentStrategy implements PaymentStrategy {
         }
     }
 
-    private String processWithWalletProvider(PaymentDTO request) {
-        // Integrate with specific wallet providers (MoMo, ZaloPay, VNPay, etc.)
-        String provider = request.getEWalletInfo().getWalletProvider();
-
-        switch (provider.toUpperCase()) {
-            case "MOMO":
-                return "https://test-payment.momo.vn/pay/" + generateTransactionId();
-            case "ZALOPAY":
-                return "https://sb-openapi.zalopay.vn/pay/" + generateTransactionId();
-            case "VNPAY":
-                return "https://sandbox.vnpayment.vn/pay/" + generateTransactionId();
-            default:
-                throw new IllegalArgumentException("Unsupported wallet provider: " + provider);
+    private void validateDebitCardInfo(PaymentRequestDTO.DebitCardInfo cardInfo) {
+        if (cardInfo == null) {
+            throw new IllegalArgumentException("Debit card information is required");
         }
+        // Additional validation logic
     }
+
+    private boolean processWithBankGateway(PaymentRequestDTO request) {
+        // Integrate with actual bank gateway
+        // This is a simulation
+        return ThreadLocalRandom.current().nextBoolean();
+    }
+
 
     private String generateTransactionId() {
         return "EW_" + System.currentTimeMillis();
@@ -68,6 +66,8 @@ public class EWalletPaymentStrategy implements PaymentStrategy {
 
     @Override
     public PaymentMethod getSupportedMethod() {
-        return null;
+        return PaymentMethod.DEBIT_CARD;
     }
+
+
 }

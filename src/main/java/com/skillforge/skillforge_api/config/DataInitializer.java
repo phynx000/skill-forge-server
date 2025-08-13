@@ -2,9 +2,11 @@ package com.skillforge.skillforge_api.config;
 
 import com.skillforge.skillforge_api.entity.Course;
 import com.skillforge.skillforge_api.entity.Review;
+import com.skillforge.skillforge_api.entity.Role;
 import com.skillforge.skillforge_api.entity.User;
 import com.skillforge.skillforge_api.repository.CourseRepository;
 import com.skillforge.skillforge_api.repository.ReviewRepository;
+import com.skillforge.skillforge_api.repository.RoleRepository;
 import com.skillforge.skillforge_api.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -15,16 +17,16 @@ import java.util.List;
 
 @Configuration
 public class DataInitializer {
-//    @Bean
-//    CommandLineRunner initRoles(RoleRepository roleRepository) {
-//        return args -> {
-//            List<String> roles = List.of("ADMIN", "INSTRUCTOR", "STUDENT");
-//            for (String roleName : roles) {
-//                roleRepository.findByName(roleName)
-//                        .orElseGet(() -> roleRepository.save(new Role(roleName)));
-//            }
-//        };
-//    }
+    @Bean
+    CommandLineRunner initRoles(RoleRepository roleRepository) {
+        return args -> {
+            List<String> roles = List.of("ADMIN", "INSTRUCTOR", "STUDENT");
+            for (String roleName : roles) {
+                roleRepository.findByName(roleName)
+                        .orElseGet(() -> roleRepository.save(new Role(roleName)));
+            }
+        };
+    }
 
 //    @Bean
 //    CommandLineRunner initReviews(ReviewRepository reviewRepository, UserRepository userRepository, CourseRepository courseRepository) {

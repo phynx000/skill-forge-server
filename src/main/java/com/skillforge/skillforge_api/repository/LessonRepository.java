@@ -9,4 +9,5 @@ public interface LessonRepository extends JpaRepository<Lesson, Long> {
     Collection<Lesson> findBySectionIdOrderByOrderIndexAsc(Long sectionId);
     Collection<Lesson> findByCourseId(Long courseId);
 
+
 }

@@ -1,4 +1,4 @@
-package com.skillforge.skillforge_api.entity;
+package com.skillforge.skillforge_api.utils.strategy;
 
 import com.skillforge.skillforge_api.dto.request.PaymentRequestDTO;
 import com.skillforge.skillforge_api.dto.response.PaymentDTO;

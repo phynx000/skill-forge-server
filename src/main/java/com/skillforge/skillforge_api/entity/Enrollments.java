@@ -1,6 +1,6 @@
 package com.skillforge.skillforge_api.entity;
 
-import com.skillforge.skillforge_api.entity.ENUM.EnrollmentStatus;
+import com.skillforge.skillforge_api.utils.constant.EnrollmentStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
