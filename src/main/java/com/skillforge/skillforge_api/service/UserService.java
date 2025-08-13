@@ -8,6 +8,7 @@ import com.skillforge.skillforge_api.dto.response.BioDTO;
 import com.skillforge.skillforge_api.dto.response.ResultPaginationDTO;
 import com.skillforge.skillforge_api.dto.response.UserDTO;
 import com.skillforge.skillforge_api.entity.User;
+import com.skillforge.skillforge_api.repository.CourseRepository;
 import com.skillforge.skillforge_api.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -33,16 +34,18 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
     private final BioMapper bioMapper;
+    private final CourseRepository courseRepository;
 
 
 
 
-    public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, RoleService roleService, BioMapper bioMapper) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, RoleService roleService, BioMapper bioMapper, CourseRepository courseRepository) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.roleService = roleService;
         this.bioMapper = bioMapper;
+        this.courseRepository = courseRepository;
     }
 
     public ResultPaginationDTO getAllUsersFromDatabase(Specification<User> spec, Pageable pageable) {
@@ -166,14 +169,18 @@ public class UserService {
         throw new UsernameNotFoundException("Cannot find current user from principal");
     }
 
-
-    public BioDTO getUserBio(Long userId) {
-        User user = fetchUserById(userId);
+    public User getUserByCourseId(Long courseId) {
+        User user = fetchUserById(courseId);
         if (user == null) {
-            throw new EntityNotFoundException("User not found with id: " + userId);
+            throw new EntityNotFoundException("User not found with id: " + courseId);
         }
+        return user;
+    }
 
 
+    public BioDTO getUserBioByCourseId(Long courseId) {
+        Optional<User> userFromDb = courseRepository.findInstructorByCourseId(courseId);
+        User user = userFromDb.isPresent() ? userFromDb.get() : null;
         return bioMapper.toBioDTO(user);
     }
 }

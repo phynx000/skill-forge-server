@@ -40,6 +40,10 @@ public class Payment {
     @Column(nullable = false)
     private PaymentStatus status;
 
+    @OneToOne
+    @JoinColumn(name = "order_id")
+    private Order order; // Liên kết tới đơn hàng
+
     @Column(columnDefinition = "TEXT")
     private String paymentDetails; // JSON string chứa thông tin thanh toán
 
