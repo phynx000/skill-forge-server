@@ -43,11 +43,11 @@ public class PaymentRequestDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class DebitCardInfo {
-        @NotBlank(message = "Card number is required")
-        @Pattern(regexp = "\\d{16}", message = "Card number must be 16 digits")
+        @NotBlank(message = "Cart number is required")
+        @Pattern(regexp = "\\d{16}", message = "Cart number must be 16 digits")
         private String cardNumber;
 
-        @NotBlank(message = "Card holder name is required")
+        @NotBlank(message = "Cart holder name is required")
         private String cardHolderName;
 
         @NotBlank(message = "Expiry date is required")

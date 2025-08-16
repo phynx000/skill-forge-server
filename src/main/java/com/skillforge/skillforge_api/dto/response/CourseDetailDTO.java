@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -15,8 +16,8 @@ public class CourseDetailDTO {
     private String description;
     private CourseInstructor instructor;
     private String lastUpdated;
-    private double originalPrice;
-    private double discountPrice;
+    private BigDecimal originalPrice;
+    private BigDecimal discountPrice;
     private double rating;
     private int lessonCount;
     private int reviewCount;

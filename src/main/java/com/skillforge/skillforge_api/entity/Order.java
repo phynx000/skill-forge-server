@@ -20,6 +20,11 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = true) // set true tạm thời, sau này sẽ là false
+    private User user;
+
+
     @Column(unique = true, nullable = false)
     private String orderCode; // Mã đơn hàng, ví dụ dùng vnp_TxnRef
 
@@ -42,12 +47,7 @@ public class Order {
     private Payment payment;
 
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinTable(
-            name = "order_items",
-            joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "item_id")
-    )
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items;
 
     public Order() {
