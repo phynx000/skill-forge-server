@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 @Component()
@@ -37,3 +36,5 @@ public class UserDetailCustom implements UserDetailsService {
     }
 
 }
+
+

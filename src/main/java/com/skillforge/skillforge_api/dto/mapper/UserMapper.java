@@ -9,6 +9,7 @@ import com.skillforge.skillforge_api.repository.RoleRepository;
 import com.skillforge.skillforge_api.utils.constant.GenderEnum;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,12 +32,13 @@ public class UserMapper {
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
         user.setGender(GenderEnum.valueOf(request.getGender()));
-
+        if (user.getCreatedAt() == null) {
+            user.setCreatedAt(Instant.now());
+        }
         // Tạm set role mặc định là STUDENT (ID 3)
         Set<Role> roles = new HashSet<>();
         roles.add(new Role(3L, "ROLE_STUDENT"));
         user.setRoles(roles);
-
         return user;
     }
 

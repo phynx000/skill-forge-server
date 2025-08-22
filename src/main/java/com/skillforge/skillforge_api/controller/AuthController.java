@@ -43,6 +43,7 @@ public class AuthController {
 
         @PostMapping("/auth/login")
         public ResponseEntity<ResponseLoginDTO> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletRequest request) {
+
             UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(
                             loginRequest.getUsername(), loginRequest.getPassword()
