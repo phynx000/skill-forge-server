@@ -4,7 +4,11 @@
 *.jar
 *.war
 *.ear
-*.md
+
+SPRING_SECURITY_DOCUMENTATION.md
+CART_API_EVALUATION.md
+CART_API_STEP_BY_STEP_GUIDE.md
+PROJECT_FEATURES.md
 
 # Gradle
 .gradle/
