@@ -11,22 +11,44 @@ import com.skillforge.skillforge_api.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Instant;
 import java.util.List;
 
 @Configuration
 public class DataInitializer {
+//    @Bean
+//    CommandLineRunner initRoles(RoleRepository roleRepository) {
+//        return args -> {
+//            List<String> roles = List.of("ADMIN", "INSTRUCTOR", "STUDENT");
+//            for (String roleName : roles) {
+//                roleRepository.findByName(roleName)
+//                        .orElseGet(() -> roleRepository.save(new Role(roleName)));
+//            }
+//        };
+//    }
+
     @Bean
-    CommandLineRunner initRoles(RoleRepository roleRepository) {
+    CommandLineRunner test() {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+        String rawPassword = "user11"; // mật khẩu người dùng nhập
+        String encodedPassword = "$2a$10$xEC2so9Nnu.3Ioy.O3t3wu0DH6j4JUI6xet.6qj4jNKdbhqKfuCDy"; // mật khẩu hash lưu DB
+
+        boolean isMatch = passwordEncoder.matches(rawPassword, encodedPassword);
+
+
         return args -> {
-            List<String> roles = List.of("ADMIN", "INSTRUCTOR", "STUDENT");
-            for (String roleName : roles) {
-                roleRepository.findByName(roleName)
-                        .orElseGet(() -> roleRepository.save(new Role(roleName)));
+            if (isMatch) {
+                System.out.println("✅ Mật khẩu đúng");
+            } else {
+                System.out.println("❌ Mật khẩu sai");
             }
         };
     }
+
 
 //    @Bean
 //    CommandLineRunner initReviews(ReviewRepository reviewRepository, UserRepository userRepository, CourseRepository courseRepository) {
@@ -62,3 +84,6 @@ public class DataInitializer {
 //    }
 
 }
+
+
+

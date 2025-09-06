@@ -52,3 +52,10 @@ Thumbs.db
 # === Docs / Other ===
 HELP.md
 git push -u origin main
+
+# Environment variables
+.env
+.env.development
+.env.local
+.env.production
+.env.staging

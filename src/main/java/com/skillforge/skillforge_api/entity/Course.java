@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class Course {
     private String title;
 
     @Column(nullable = false) // title should not be null
-    private double price;
+    private BigDecimal price;
     // price should not be null
 
     @Column(unique = false, length = 100) // slug should be unique and not null
