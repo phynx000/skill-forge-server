@@ -17,6 +17,14 @@ public class CartController {
         this.cartService = cartService;
     }
 
+
+    @GetMapping("/carts")
+    @ApiMessage(value = "Get current user's cart")
+    public ResponseEntity<CartDTO> getCart() {
+        CartDTO cart = cartService.getCart();
+        return ResponseEntity.ok(cart);
+    }
+
     @PatchMapping("/carts/{itemId}")
     @ApiMessage(value = "Update entity in cart")
     public ResponseEntity<CartDTO.CardItemDTO> updateCart(@PathVariable Long itemId,

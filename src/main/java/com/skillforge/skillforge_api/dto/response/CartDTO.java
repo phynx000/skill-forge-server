@@ -16,6 +16,10 @@ public class CartDTO {
     private BigDecimal totalPrice;
     private List<CardItemDTO> items;
 
+    public CartDTO() {
+
+    }
+
     @Getter
     @Setter
     @AllArgsConstructor

@@ -8,3 +8,4 @@ import lombok.*;
 public class UpdateQuantityCartRequest {
     private int quantity;
 }
+
