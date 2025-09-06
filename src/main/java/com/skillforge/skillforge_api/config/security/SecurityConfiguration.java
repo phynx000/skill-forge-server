@@ -38,8 +38,6 @@ public class SecurityConfiguration {
     @Value("${jwt.secret}")
     private String jwtSecretKey;
 
-    @Value("${bunny.api-key}")
-    private String bunnyApiKey;
 
 //    @PostConstruct
 //    public void init() {

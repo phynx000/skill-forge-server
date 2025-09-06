@@ -81,16 +81,19 @@ public class UserService {
     @Transactional
     public UserDTO handleCreateUser(UserCreateRequest request) {
         User user = userMapper.toEntity(request);
-        // Mã hóa mật khẩu trước khi lưu
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         String hashed = user.getPassword();
 
-        // check role
         if (user.getRoles() == null || user.getRoles().isEmpty()) {
             user.setRoles(roleService.getDefaultRolesForUser());
         }
 
         User savedUser = userRepository.save(user);
+
+        // Test password matching for debugging
+        boolean matches = passwordEncoder.matches("user123", savedUser.getPassword());
+        System.out.println("Password matches test: " + matches);
+
         return userMapper.toDto(savedUser);
     }
 

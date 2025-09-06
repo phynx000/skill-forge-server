@@ -64,6 +64,8 @@ public class User {
     @Column(columnDefinition = "TEXT")
     private String refreshToken;
 
+
+
     public User() {
     }
 

@@ -49,8 +49,8 @@ public class UserController {
     @PostMapping("/users")
     @ApiMessage(value = "create a new user successfully")
     public ResponseEntity<UserDTO> createUser(@RequestBody UserCreateRequest request) {
-        String hashPassword = this.passwordEncoder.encode(request.getPassword());
-        request.setPassword(hashPassword);
+//        String hashPassword = this.passwordEncoder.encode(request.getPassword());
+//        request.setPassword(hashPassword);
         UserDTO newUserDTO = this.userService.handleCreateUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(newUserDTO);
     }
